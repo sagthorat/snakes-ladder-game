@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Cost Quest - The Road to 100% Cloud Efficiency</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2d3561 0%, #4a4e7a 50%, #3e4268 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body.fullscreen {
+            overflow: auto;
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(167, 139, 250, 0.9);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 10000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(167, 139, 250, 1);
+            transform: scale(1.05);
+        }
+
+        .screen {
+            display: none;
+            background: linear-gradient(135deg, #3a3f5c 0%, #4a4e6e 100%);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1400px;
+            width: 95vw;
+            max-height: 95vh;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeInScale 0.4s ease forwards;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .screen-center {
+            text-align: center;
+        }
+
+        h1 {
+            color: #a78bfa;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+        }
+
+        h2 {
+            color: #c4b5fd;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            color: #a1a1aa;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .intro-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin: 30px auto;
+            max-width: 600px;
+            color: #e4e4e7;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+            background: linear-gradient(135deg, #7b8ef5 0%, #8b5fb8 100%);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .instructions-list {
+            text-align: left;
+            max-width: 500px;
+            margin: 30px auto;
+            font-size: 1.1em;
+            line-height: 2;
+        }
+
+        .instructions-list li {
+            margin: 15px 0;
+            color: #e4e4e7;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .screen {
+                padding: 30px;
+                width: 98vw;
+            }
+
+            .game-container {
+                gap: 20px;
+            }
+
+            .square {
+                min-width: 50px;
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .game-container {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+
+            .controls {
+                width: 100%;
+                max-width: 400px;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .dice-container,
+            .stats {
+                flex: 1;
+                min-width: 250px;
+            }
+
+            .legend {
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .screen {
+                padding: 20px;
+            }
+
+            .square {
+                min-width: 40px;
+                font-size: 0.7em;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .square {
+                min-width: 30px;
+                font-size: 0.6em;
+            }
+
+            .board {
+                padding: 8px;
+                gap: 2px;
+            }
+
+            .legend-items {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+        }
+
+        /* Touch-friendly enhancements */
+        @media (hover: none) and (pointer: coarse) {
+            button {
+                padding: 18px 40px;
+                font-size: 1.3em;
+                min-height: 50px;
+            }
+
+            #rollButton {
+                min-width: 200px;
+                min-height: 60px;
+                font-size: 1.4em;
+            }
+
+            .square {
+                min-width: 45px;
+            }
+        }
+
+        /* Fullscreen specific styles */
+        body:fullscreen .screen,
+        body:-webkit-full-screen .screen,
+        body:-moz-full-screen .screen,
+        body:-ms-fullscreen .screen {
+            max-width: 100vw;
+            max-height: 100vh;
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            overflow-y: auto;
+        }
+
+        body:fullscreen .fullscreen-btn,
+        body:-webkit-full-screen .fullscreen-btn,
+        body:-moz-full-screen .fullscreen-btn,
+        body:-ms-fullscreen .fullscreen-btn {
+            background: rgba(255, 107, 107, 0.9);
+        }
+
+        .board-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        @media (min-width: 1400px) {
+            .board-container {
+                max-width: 900px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .board-container {
+                max-width: 100%;
+            }
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            background:
+                linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%),
+                rgba(0, 0, 0, 0.2);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            padding: 15px;
+            border-radius: 10px;
+            position: relative;
+            border: 3px solid rgba(167, 139, 250, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .square {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #e4e4e7;
+            position: relative;
+            min-width: 60px;
+            border-radius: 5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .square:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(167, 139, 250, 0.4);
+            z-index: 2;
+        }
+
+        .square.snake-start {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+
+        .square.snake-start::after {
+            content: '🐍';
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 1.2em;
+        }
+
+        .square.ladder-start {
+            background: linear-gradient(135deg, #51cf66, #37b24d);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(81, 207, 102, 0.5);
+        }
+
+        .square.ladder-start::after {
+            content: '🪜';
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 1.2em;
+        }
+
+        .square.event-square {
+            background: linear-gradient(135deg, #ffd93d, #f9ca24);
+            box-shadow: 0 0 15px rgba(255, 217, 61, 0.4);
+        }
+
+        .square.event-square::after {
+            content: '⚡';
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 1.2em;
+        }
+
+        .square.snake-end {
+            border: 2px solid #ff6b6b;
+            box-shadow: inset 0 0 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .square.ladder-end {
+            border: 2px solid #51cf66;
+            box-shadow: inset 0 0 10px rgba(81, 207, 102, 0.3);
+        }
+
+        .square.current-position {
+            animation: glow 1.5s ease-in-out infinite;
+            border: 3px solid #a78bfa;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(167, 139, 250, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+            }
+        }
+
+        .player-token {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            z-index: 10;
+            animation: tokenBounce 0.3s ease;
+        }
+
+        @keyframes tokenBounce {
+            0% {
+                transform: scale(0.5) translateY(-20px);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) translateY(0);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .player-token.jumping-up {
+            animation: jumpUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .player-token.jumping-down {
+            animation: jumpDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes jumpUp {
+            0% {
+                transform: scale(1) translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            30% {
+                transform: scale(1.5) translateY(-50px) rotate(180deg);
+                opacity: 0.8;
+            }
+            60% {
+                transform: scale(1.3) translateY(-30px) rotate(360deg);
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(1) translateY(0) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes jumpDown {
+            0% {
+                transform: scale(1) translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            30% {
+                transform: scale(1.5) translateY(-30px) rotate(-180deg);
+                opacity: 0.8;
+            }
+            60% {
+                transform: scale(1.3) translateY(20px) rotate(-360deg);
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(1) translateY(0) rotate(-360deg);
+                opacity: 1;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confettiFall 3s ease-out forwards;
+            z-index: 100;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .particle.positive {
+            background: #51cf66;
+            animation: particleRise 1s ease-out forwards;
+        }
+
+        .particle.negative {
+            background: #ff6b6b;
+            animation: particleFall 1s ease-out forwards;
+        }
+
+        @keyframes particleRise {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes particleFall {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .jump-trail {
+            position: fixed;
+            pointer-events: none;
+            z-index: 15;
+            opacity: 0;
+        }
+
+        .jump-trail.active {
+            animation: trailFade 0.8s ease-out;
+        }
+
+        @keyframes trailFade {
+            0% {
+                opacity: 0.8;
+                filter: blur(2px);
+            }
+            100% {
+                opacity: 0;
+                filter: blur(10px);
+            }
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            min-width: 250px;
+        }
+
+        .dice-container {
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%);
+            border: 3px solid #a78bfa;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .dice-container h3 {
+            color: #e4e4e7;
+        }
+
+        .dice {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            border: 3px solid #a78bfa;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: #333;
+            margin: 20px auto;
+            transition: all 0.1s;
+            box-shadow:
+                0 8px 20px rgba(167, 139, 250, 0.4),
+                inset 0 -4px 8px rgba(0, 0, 0, 0.1),
+                inset 0 4px 8px rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        .dice::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+            border-radius: 12px 12px 0 0;
+            pointer-events: none;
+        }
+
+        .dice.rolling {
+            animation: roll3d 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes roll3d {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            20% {
+                transform: rotate(180deg) scale(1.1) translateY(-10px);
+            }
+            40% {
+                transform: rotate(360deg) scale(0.95) translateY(0px);
+            }
+            60% {
+                transform: rotate(540deg) scale(1.05) translateY(-5px);
+            }
+            80% {
+                transform: rotate(720deg) scale(0.98) translateY(0px);
+            }
+            100% {
+                transform: rotate(720deg) scale(1);
+            }
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .stat-item {
+            margin: 10px 0;
+            font-size: 1em;
+            color: #e4e4e7;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #a78bfa;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%);
+            padding: 25px 45px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+            max-width: 600px;
+            text-align: center;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-30px);
+            }
+            50% {
+                transform: translateX(-50%) translateY(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .notification.show {
+            animation: slideDown 0.5s ease, notificationShake 0.3s ease 0.5s;
+        }
+
+        @keyframes notificationShake {
+            0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+            25% { transform: translateX(-50%) translateY(0) rotate(-2deg); }
+            75% { transform: translateX(-50%) translateY(0) rotate(2deg); }
+        }
+
+        .notification.positive {
+            border: 3px solid #51cf66;
+            box-shadow: 0 8px 30px rgba(81, 207, 102, 0.4);
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%),
+                        linear-gradient(to right, rgba(81, 207, 102, 0.1), transparent);
+        }
+
+        .notification.negative {
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%),
+                        linear-gradient(to right, rgba(255, 107, 107, 0.1), transparent);
+        }
+
+        .notification h3 {
+            margin-bottom: 15px;
+            color: #e4e4e7;
+            font-size: 1.5em;
+        }
+
+        .notification p {
+            color: #e4e4e7;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .event-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none;
+            max-width: 500px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .event-card h2 {
+            color: #e4e4e7;
+        }
+
+        .event-card p {
+            color: #e4e4e7;
+        }
+
+        .event-card.show {
+            display: block;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5) rotate(-5deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05) rotate(2deg);
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(0.95) rotate(-1deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+        }
+
+        .event-card.positive {
+            border: 3px solid #51cf66;
+            box-shadow: 0 10px 40px rgba(81, 207, 102, 0.3);
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%),
+                        linear-gradient(to bottom, rgba(81, 207, 102, 0.1), transparent);
+        }
+
+        .event-card.negative {
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.3);
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%),
+                        linear-gradient(to bottom, rgba(255, 107, 107, 0.1), transparent);
+        }
+
+        .event-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .event-status.positive {
+            background: #d3f9d8;
+            color: #2b8a3e;
+        }
+
+        .event-status.negative {
+            background: #ffe3e3;
+            color: #c92a2a;
+        }
+
+        .results-container {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .results-stats {
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .result-item {
+            font-size: 1.2em;
+            margin: 15px 0;
+            color: #e4e4e7;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #51cf66, #a78bfa);
+            transition: width 1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: rgba(167, 139, 250, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #a78bfa;
+        }
+
+        .stat-description {
+            font-size: 0.9em;
+            color: #d4d4d8;
+            margin-top: 5px;
+        }
+
+        .keyboard-hints {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(74, 78, 110, 0.9);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            font-size: 0.85em;
+            color: #d4d4d8;
+            z-index: 9999;
+            max-width: 250px;
+        }
+
+        .keyboard-hints h4 {
+            margin: 0 0 10px 0;
+            color: #a78bfa;
+            font-size: 1em;
+        }
+
+        .keyboard-hints div {
+            margin: 5px 0;
+        }
+
+        .keyboard-hints kbd {
+            background: rgba(167, 139, 250, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #e4e4e7;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        @media (max-width: 900px) {
+            .keyboard-hints {
+                display: none;
+            }
+        }
+
+        .celebration {
+            font-size: 3em;
+            margin: 20px 0;
+            animation: celebrationBounce 0.8s ease-in-out infinite;
+        }
+
+        @keyframes celebrationBounce {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+            }
+            25% {
+                transform: scale(1.2) rotate(-10deg);
+            }
+            75% {
+                transform: scale(1.2) rotate(10deg);
+            }
+        }
+
+        .results-container.winning .celebration {
+            animation: celebrationSpin 1s ease-in-out, celebrationBounce 0.8s ease-in-out 1s infinite;
+        }
+
+        @keyframes celebrationSpin {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.5) rotate(180deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        .legend {
+            background: linear-gradient(135deg, #4a4e6e 0%, #565a7e 100%);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .legend-title {
+            color: #a78bfa;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e4e4e7;
+            font-size: 0.9em;
+        }
+
+        .legend-icon {
+            font-size: 1.5em;
+        }
+
+        .welcome-icon {
+            font-size: 4em;
+            margin: 20px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+            max-width: 800px;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(167, 139, 250, 0.05) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            text-align: left;
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: #a78bfa;
+            margin-bottom: 5px;
+        }
+
+        .feature-desc {
+            font-size: 0.9em;
+            color: #d4d4d8;
+        }
+
+        .final-message {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #e4e4e7;
+            margin: 20px 0;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 5;
+            width: 100%;
+            height: 100%;
+        }
+
+        .square {
+            z-index: 1;
+            position: relative;
+        }
+
+        .square span {
+            font-weight: 700;
+            font-size: 1em;
+        }
+
+        .player-token {
+            z-index: 15;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcomeScreen" class="screen screen-center active">
+        <div class="welcome-icon">☁️💰</div>
+        <h1>Cloud Cost Quest</h1>
+        <h2 class="subtitle">The Road to 100% Cloud Efficiency</h2>
+        <div style="font-weight: 600; color: #a78bfa; margin: 20px 0; font-size: 1.2em; letter-spacing: 3px;">CenITex Connect</div>
+        <p class="intro-text">
+            Can you achieve cloud cost efficiency?<br><br>
+            Roll the dice, climb the ladders of good FinOps practices and avoid the snakes of cloud cost inefficiencies. Your goal is to reach 100!
+        </p>
+        <div class="feature-list" style="margin: 30px auto;">
+            <div class="feature-item">
+                <div class="feature-icon">🪜</div>
+                <div class="feature-title">Climb Ladders</div>
+                <div class="feature-desc">Good FinOps practices boost efficiency</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🐍</div>
+                <div class="feature-title">Avoid Snakes</div>
+                <div class="feature-desc">Cost inefficiencies slow you down</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Event Cards</div>
+                <div class="feature-desc">Real-world FinOps scenarios</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⏱️</div>
+                <div class="feature-title">Beat the Clock</div>
+                <div class="feature-desc">3 minutes to reach 100%</div>
+            </div>
+        </div>
+        <button onclick="showInstructions()">Start Game</button>
+    </div>
+
+    <div id="instructionsScreen" class="screen screen-center">
+        <div class="welcome-icon">🎮</div>
+        <h1>How to Play</h1>
+        <div class="feature-list" style="margin: 30px auto; text-align: left;">
+            <div class="feature-item">
+                <div class="feature-icon">🎲</div>
+                <div class="feature-title">1. Roll the Dice</div>
+                <div class="feature-desc">Click the Roll button to move 1-6 squares forward</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🪜</div>
+                <div class="feature-title">2. Climb Ladders</div>
+                <div class="feature-desc">Land on green squares to jump ahead with FinOps best practices</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🐍</div>
+                <div class="feature-title">3. Avoid Snakes</div>
+                <div class="feature-desc">Red squares represent cost inefficiencies that set you back</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">4. Event Cards</div>
+                <div class="feature-desc">Yellow squares trigger real-world FinOps scenarios</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">5. Reach 100</div>
+                <div class="feature-desc">First to square 100 wins! Must roll exact number.</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⏱️</div>
+                <div class="feature-title">6. Beat 3 Minutes</div>
+                <div class="feature-desc">Complete your quest before time runs out!</div>
+            </div>
+        </div>
+        <button onclick="startGame()">Start Playing</button>
+    </div>
+
+    <div id="gameScreen" class="screen">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2>Cloud Cost Quest</h2>
+        </div>
+        <div class="game-container">
+            <div class="board-container">
+                <div id="board" class="board">
+                    <canvas id="connectionsCanvas"></canvas>
+                </div>
+                <div class="legend">
+                    <div class="legend-title">Game Guide</div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-icon">🪜</span>
+                            <span>Ladders (Good Practices)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon">🐍</span>
+                            <span>Snakes (Inefficiencies)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon">⚡</span>
+                            <span>Event Cards</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon">☁️</span>
+                            <span>Your Position</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="dice-container">
+                    <h3>Roll the Dice</h3>
+                    <div id="dice" class="dice">?</div>
+                    <button id="rollButton" onclick="rollDice()">Roll</button>
+                    <button id="soundToggle" onclick="toggleSound()" style="margin-top: 10px; padding: 8px 20px; font-size: 0.9em;">
+                        🔊 Sound ON
+                    </button>
+                </div>
+                <div class="stats">
+                    <div class="stat-item" style="font-size: 1.3em; color: #ffd93d; font-weight: bold; margin-bottom: 15px;">
+                        <span class="stat-label" style="color: #ffd93d;">⏱️ Time:</span> <span id="timer">3:00</span>
+                    </div>
+                    <div class="stat-item"><span class="stat-label">Position:</span> <span id="position">1</span>/100</div>
+                    <div class="stat-item"><span class="stat-label">Rolls:</span> <span id="rolls">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Ladders Climbed:</span> <span id="ladders">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Snakes Hit:</span> <span id="snakes">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultsScreen" class="screen screen-center">
+        <div class="results-container">
+            <div class="celebration">🎉</div>
+            <h1>100% Cloud Cost Quest!</h1>
+            <h2>Congratulations!</h2>
+            <p class="intro-text">
+                You've completed your journey towards cloud cost efficiency.<br><br>
+                You've navigated the challenges, avoided unnecessary cloud expenditure and discovered the value of FinOps.
+            </p>
+
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 100%;">
+                    <span id="progressText">100%</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number" id="finalPosition">100</div>
+                    <div class="stat-description">Final Position</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="finalTime">0:00</div>
+                    <div class="stat-description">Time Remaining</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="finalRolls">0</div>
+                    <div class="stat-description">Total Dice Rolls</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="finalLadders">0</div>
+                    <div class="stat-description">🪜 Ladders Climbed</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="finalSnakes">0</div>
+                    <div class="stat-description">🐍 Snakes Hit</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="finalPositive">0</div>
+                    <div class="stat-description">✅ Positive Events</div>
+                </div>
+            </div>
+
+            <p class="intro-text" style="font-style: italic; font-size: 1em; margin-top: 30px;">
+                "FinOps is a continuous journey of visibility, accountability and optimisation. The goal isn't simply to spend less, but to maximise the value of every cloud dollar."
+            </p>
+            <div style="margin-top: 30px;">
+                <button onclick="playAgain()">Play Again</button>
+                <button onclick="returnToWelcome()">Return to Welcome</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="fullscreenBtn" class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+
+    <div id="keyboardHints" class="keyboard-hints" style="display: none;">
+        <h4>⌨️ Keyboard Shortcuts</h4>
+        <div><kbd>Space</kbd> / <kbd>Enter</kbd> - Roll Dice</div>
+        <div><kbd>F</kbd> - Fullscreen</div>
+        <div><kbd>M</kbd> - Mute/Unmute</div>
+        <div><kbd>Esc</kbd> - Close Cards</div>
+    </div>
+
+    <div id="notification" class="notification">
+        <h3 id="notificationTitle"></h3>
+        <p id="notificationText"></p>
+    </div>
+
+    <div id="eventCard" class="event-card">
+        <span id="eventStatus" class="event-status"></span>
+        <h2 id="eventTitle"></h2>
+        <p id="eventDescription" style="margin: 20px 0; line-height: 1.6;"></p>
+        <p id="eventAction" style="font-weight: 600; color: #a78bfa;"></p>
+        <button onclick="closeEventCard()">Continue</button>
+    </div>
+
+    <script>
+        const GAME_CONFIG = {
+            board: {
+                size: 100,
+                rows: 10,
+                cols: 10
+            },
+            snakes: [
+                { start: 23, end: 7, name: "Idle Instances", description: "Leaving development and test instances running overnight or during weekends." },
+                { start: 48, end: 26, name: "No Commitment Discounts", description: "Not considering Savings Plans, Reserved Instances or equivalent commitment-based pricing." },
+                { start: 62, end: 45, name: "Orphaned Resources", description: "Unattached disks, unused IP addresses, abandoned snapshots and forgotten resources." },
+                { start: 87, end: 66, name: "Excessive Data Transfer", description: "Poor architecture causing unnecessary cross-region or cross-zone data transfer charges." },
+                { start: 95, end: 80, name: "Uncontrolled Consumption", description: "Resources being provisioned without sufficient cost oversight or review." }
+            ],
+            ladders: [
+                { start: 2, end: 14, name: "Cost Monitoring Tools", description: "Implementing cloud cost monitoring and alerting dashboards." },
+                { start: 4, end: 18, name: "Automated Shutdown", description: "Automatically shutting down non-production workloads outside business hours." },
+                { start: 9, end: 31, name: "Rightsizing", description: "Matching compute resources to actual utilisation and performance requirements." },
+                { start: 13, end: 29, name: "Budget Alerts", description: "Setting up proactive cost alerts to catch unexpected spending early." },
+                { start: 21, end: 42, name: "Autoscaling", description: "Dynamically scaling resources based on workload demand." },
+                { start: 28, end: 50, name: "Reserved Instances", description: "Using commitment-based pricing for predictable workloads to reduce costs." },
+                { start: 35, end: 56, name: "Spot Instances", description: "Using spot instances for non-critical workloads to save up to 90%." },
+                { start: 40, end: 61, name: "Storage Lifecycle Management", description: "Moving data automatically to lower-cost storage tiers based on access patterns." },
+                { start: 47, end: 69, name: "Resource Tagging", description: "Implementing consistent tagging for cost allocation and tracking." },
+                { start: 51, end: 72, name: "Cost Visibility and Tagging", description: "Implementing consistent tagging, budgets and cost allocation across teams." },
+                { start: 58, end: 77, name: "Cloud-Native Services", description: "Using serverless and managed services to reduce operational overhead." },
+                { start: 63, end: 82, name: "FinOps Ownership", description: "Encouraging teams to take responsibility for their cloud consumption." },
+                { start: 68, end: 86, name: "Architecture Optimisation", description: "Selecting appropriate cloud services and architectures to avoid unnecessary costs." },
+                { start: 71, end: 92, name: "Continuous Optimisation", description: "Regularly reviewing resource utilisation and implementing cost optimisation recommendations." },
+                { start: 76, end: 94, name: "Cost Optimization Best Practices", description: "Following industry-standard FinOps frameworks for maximum efficiency." }
+            ],
+            eventCards: [
+                { position: 15, type: "positive", title: "Automated Shutdown Success", status: "Good Decision", description: "Your development environment now shuts down automatically every evening and over weekends. Great work reducing unnecessary compute consumption!", movement: 5 },
+                { position: 35, type: "positive", title: "Rightsizing Success", status: "Cost Optimisation", description: "You reviewed workload utilisation and reduced oversized virtual machine instances. You're getting more value from your cloud spend!", movement: 4 },
+                { position: 50, type: "negative", title: "Forgotten Resources", status: "Cost Inefficiency", description: "You discovered 15 unattached disks still generating charges. Time to clean up your cloud environment!", movement: -5 },
+                { position: 65, type: "negative", title: "Unexpected Cloud Bill", status: "Cost Alert", description: "Your monthly cloud expenditure exceeded budget because nobody was monitoring consumption.", movement: -4 },
+                { position: 85, type: "positive", title: "FinOps Ownership", status: "Great Practice", description: "Your application teams now understand and take responsibility for their cloud consumption.", movement: 5 }
+            ],
+            branding: {
+                title: "CLOUD COST QUEST",
+                subtitle: "THE ROAD TO 100% CLOUD EFFICIENCY",
+                eventName: "CenITex Connect"
+            },
+            animations: {
+                diceRollDuration: 800,
+                playerMoveDuration: 300,
+                snakeSlideDuration: 600,
+                ladderClimbDuration: 600
+            },
+            rules: {
+                exactToWin: true,
+                startPosition: 1
+            }
+        };
+
+        let gameState = {
+            currentPosition: 1,
+            rolls: 0,
+            laddersClimbed: 0,
+            snakesHit: 0,
+            positiveEvents: 0,
+            negativeEvents: 0,
+            isAnimating: false,
+            timeRemaining: 180, // 3 minutes in seconds
+            timerInterval: null,
+            soundEnabled: true
+        };
+
+        // Sound Effects using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            switch(type) {
+                case 'diceRoll':
+                    // Quick ascending beeps
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.15);
+                    break;
+
+                case 'ladder':
+                    // Ascending happy sound
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.3);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                    break;
+
+                case 'snake':
+                    // Descending negative sound
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.4);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.4);
+                    break;
+
+                case 'move':
+                    // Short click
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.05);
+                    break;
+
+                case 'event':
+                    // Alert sound
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.setValueAtTime(500, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                    break;
+
+                case 'win':
+                    // Victory fanfare
+                    playVictoryFanfare();
+                    return; // Special case, handled separately
+
+                case 'timeWarning':
+                    // Urgent beep
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+
+                case 'jump':
+                    // Swoosh sound for snake/ladder jump
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.2);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.5);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                    break;
+            }
+        }
+
+        function playVictoryFanfare() {
+            if (!gameState.soundEnabled) return;
+
+            const notes = [523.25, 587.33, 659.25, 783.99, 880.00]; // C, D, E, G, A
+            notes.forEach((freq, index) => {
+                setTimeout(() => {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + 0.4);
+                }, index * 100);
+            });
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const screen = document.getElementById(screenId);
+            screen.classList.add('active');
+
+            // Show/hide keyboard hints only on game screen
+            const hints = document.getElementById('keyboardHints');
+            if (screenId === 'gameScreen') {
+                hints.style.display = 'block';
+            } else {
+                hints.style.display = 'none';
+            }
+        }
+
+        function createParticles(square, type) {
+            const rect = square.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = `particle ${type}`;
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                particle.style.position = 'fixed';
+
+                const angle = (Math.PI * 2 * i) / 12;
+                const distance = 50 + Math.random() * 30;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+
+                document.body.appendChild(particle);
+
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#51cf66', '#ffd93d', '#a78bfa', '#ff6b6b', '#4dabf7'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.position = 'fixed';
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function showInstructions() {
+            showScreen('instructionsScreen');
+        }
+
+        function startGame() {
+            gameState = {
+                currentPosition: GAME_CONFIG.rules.startPosition,
+                rolls: 0,
+                laddersClimbed: 0,
+                snakesHit: 0,
+                positiveEvents: 0,
+                negativeEvents: 0,
+                isAnimating: false,
+                timeRemaining: 180,
+                timerInterval: null,
+                soundEnabled: gameState.soundEnabled
+            };
+            createBoard();
+            updateStats();
+            startTimer();
+            showScreen('gameScreen');
+            document.getElementById('keyboardHints').style.display = 'block';
+        }
+
+        function startTimer() {
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+            }
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeRemaining--;
+                updateTimerDisplay();
+
+                if (gameState.timeRemaining <= 0) {
+                    endGameTimeUp();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(gameState.timeRemaining / 60);
+            const seconds = gameState.timeRemaining % 60;
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Change color when time is running out
+            if (gameState.timeRemaining <= 30) {
+                timerElement.style.color = '#ff6b6b';
+                timerElement.parentElement.querySelector('.stat-label').style.color = '#ff6b6b';
+                // Play warning sound at 30, 20, 10 seconds
+                if (gameState.timeRemaining === 30 || gameState.timeRemaining === 20 || gameState.timeRemaining === 10) {
+                    playSound('timeWarning');
+                }
+            } else if (gameState.timeRemaining <= 60) {
+                timerElement.style.color = '#ffa94d';
+                timerElement.parentElement.querySelector('.stat-label').style.color = '#ffa94d';
+                if (gameState.timeRemaining === 60) {
+                    playSound('timeWarning');
+                }
+            } else {
+                timerElement.style.color = '#ffd93d';
+                timerElement.parentElement.querySelector('.stat-label').style.color = '#ffd93d';
+            }
+        }
+
+        function endGameTimeUp() {
+            clearInterval(gameState.timerInterval);
+            gameState.isAnimating = true;
+            document.getElementById('rollButton').disabled = true;
+
+            setTimeout(() => {
+                showResultsTimeUp();
+            }, 500);
+        }
+
+        function showResultsTimeUp() {
+            document.getElementById('finalPosition').textContent = gameState.currentPosition;
+            document.getElementById('finalTime').textContent = '0:00';
+            document.getElementById('finalRolls').textContent = gameState.rolls;
+            document.getElementById('finalLadders').textContent = gameState.laddersClimbed;
+            document.getElementById('finalSnakes').textContent = gameState.snakesHit;
+            document.getElementById('finalPositive').textContent = gameState.positiveEvents;
+
+            // Reset progress bar for animation
+            document.getElementById('progressFill').style.width = '0%';
+
+            // Update results screen for time-up scenario
+            const resultsScreen = document.getElementById('resultsScreen');
+            const resultsContainer = resultsScreen.querySelector('.results-container');
+            const celebrationDiv = resultsScreen.querySelector('.celebration');
+            const mainTitle = resultsScreen.querySelector('h1');
+            const subtitle = resultsScreen.querySelector('h2');
+
+            resultsContainer.classList.remove('winning');
+            celebrationDiv.textContent = '⏰';
+            mainTitle.textContent = 'Time\'s Up!';
+            subtitle.textContent = `You reached ${gameState.currentPosition}% efficiency!`;
+
+            showScreen('resultsScreen');
+
+            // Animate progress bar after screen shows
+            setTimeout(() => {
+                const progressPercent = (gameState.currentPosition / GAME_CONFIG.board.size) * 100;
+                document.getElementById('progressFill').style.width = progressPercent + '%';
+                document.getElementById('progressText').textContent = Math.round(progressPercent) + '%';
+            }, 500);
+        }
+
+        function createBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'connectionsCanvas';
+            board.appendChild(canvas);
+
+            for (let row = GAME_CONFIG.board.rows - 1; row >= 0; row--) {
+                for (let col = 0; col < GAME_CONFIG.board.cols; col++) {
+                    const isReversed = row % 2 === 0;
+                    const actualCol = isReversed ? GAME_CONFIG.board.cols - 1 - col : col;
+                    const squareNumber = row * GAME_CONFIG.board.cols + actualCol + 1;
+
+                    const square = document.createElement('div');
+                    square.className = 'square';
+                    square.id = `square-${squareNumber}`;
+
+                    const numberSpan = document.createElement('span');
+                    numberSpan.textContent = squareNumber;
+                    numberSpan.style.position = 'absolute';
+                    numberSpan.style.top = '5px';
+                    numberSpan.style.left = '5px';
+                    square.appendChild(numberSpan);
+
+                    const snake = GAME_CONFIG.snakes.find(s => s.start === squareNumber);
+                    const ladder = GAME_CONFIG.ladders.find(l => l.start === squareNumber);
+                    const snakeEnd = GAME_CONFIG.snakes.find(s => s.end === squareNumber);
+                    const ladderEnd = GAME_CONFIG.ladders.find(l => l.end === squareNumber);
+                    const event = GAME_CONFIG.eventCards.find(e => e.position === squareNumber);
+
+                    if (snake) {
+                        square.classList.add('snake-start');
+                        square.title = `${snake.name} - slides to ${snake.end}`;
+                    }
+                    if (ladder) {
+                        square.classList.add('ladder-start');
+                        square.title = `${ladder.name} - climbs to ${ladder.end}`;
+                    }
+                    if (snakeEnd) {
+                        square.classList.add('snake-end');
+                    }
+                    if (ladderEnd) {
+                        square.classList.add('ladder-end');
+                    }
+                    if (event) {
+                        square.classList.add('event-square');
+                        square.title = `Event: ${event.title}`;
+                    }
+
+                    board.appendChild(square);
+                }
+            }
+
+            drawConnections();
+            placePlayer(gameState.currentPosition);
+        }
+
+        function drawConnections() {
+            const canvas = document.getElementById('connectionsCanvas');
+            const board = document.getElementById('board');
+
+            // Use device pixel ratio for crisp rendering
+            const dpr = window.devicePixelRatio || 1;
+            const rect = board.getBoundingClientRect();
+
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            const drawConnection = (start, end, color, thickness) => {
+                const startSquare = document.getElementById(`square-${start}`);
+                const endSquare = document.getElementById(`square-${end}`);
+
+                if (!startSquare || !endSquare) return;
+
+                const startRect = startSquare.getBoundingClientRect();
+                const endRect = endSquare.getBoundingClientRect();
+                const boardRect = board.getBoundingClientRect();
+
+                const startX = startRect.left - boardRect.left + startRect.width / 2;
+                const startY = startRect.top - boardRect.top + startRect.height / 2;
+                const endX = endRect.left - boardRect.left + endRect.width / 2;
+                const endY = endRect.top - boardRect.top + endRect.height / 2;
+
+                // Draw shadow for depth
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.lineWidth = thickness + 2;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(startX + 2, startY + 2);
+                const controlX = (startX + endX) / 2;
+                const controlY = (startY + endY) / 2 - 40;
+                ctx.quadraticCurveTo(controlX + 2, controlY + 2, endX + 2, endY + 2);
+                ctx.stroke();
+
+                // Draw main line
+                ctx.strokeStyle = color;
+                ctx.lineWidth = thickness;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.quadraticCurveTo(controlX, controlY, endX, endY);
+                ctx.stroke();
+
+                // Draw arrow at end
+                const angle = Math.atan2(endY - controlY, endX - controlX);
+                const arrowLength = 15;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(
+                    endX - arrowLength * Math.cos(angle - Math.PI / 6),
+                    endY - arrowLength * Math.sin(angle - Math.PI / 6)
+                );
+                ctx.lineTo(
+                    endX - arrowLength * Math.cos(angle + Math.PI / 6),
+                    endY - arrowLength * Math.sin(angle + Math.PI / 6)
+                );
+                ctx.closePath();
+                ctx.fill();
+            };
+
+            GAME_CONFIG.snakes.forEach(snake => {
+                drawConnection(snake.start, snake.end, '#ff6b6b', 6);
+            });
+
+            GAME_CONFIG.ladders.forEach(ladder => {
+                drawConnection(ladder.start, ladder.end, '#51cf66', 6);
+            });
+        }
+
+        function placePlayer(position) {
+            const existingToken = document.querySelector('.player-token');
+            if (existingToken) existingToken.remove();
+
+            // Remove current-position class from all squares
+            document.querySelectorAll('.square.current-position').forEach(sq => {
+                sq.classList.remove('current-position');
+            });
+
+            const square = document.getElementById(`square-${position}`);
+            if (!square) return;
+
+            // Add glow effect to current square
+            square.classList.add('current-position');
+
+            const token = document.createElement('div');
+            token.className = 'player-token';
+            token.textContent = '☁️';
+            square.appendChild(token);
+        }
+
+        function rollDice() {
+            if (gameState.isAnimating) return;
+
+            gameState.isAnimating = true;
+            const rollButton = document.getElementById('rollButton');
+            const dice = document.getElementById('dice');
+            rollButton.disabled = true;
+
+            playSound('diceRoll');
+            dice.classList.add('rolling');
+
+            let rollCount = 0;
+            const rollInterval = setInterval(() => {
+                dice.textContent = Math.floor(Math.random() * 6) + 1;
+                rollCount++;
+                if (rollCount > 8) {
+                    clearInterval(rollInterval);
+                    const finalRoll = Math.floor(Math.random() * 6) + 1;
+                    dice.textContent = finalRoll;
+                    dice.classList.remove('rolling');
+
+                    setTimeout(() => {
+                        movePlayer(finalRoll);
+                    }, 300);
+                }
+            }, 100);
+
+            gameState.rolls++;
+            updateStats();
+        }
+
+        function movePlayer(steps) {
+            let newPosition = gameState.currentPosition + steps;
+
+            if (GAME_CONFIG.rules.exactToWin && newPosition > GAME_CONFIG.board.size) {
+                showNotification('Need Exact Roll', `You need exactly ${GAME_CONFIG.board.size - gameState.currentPosition} to win!`, 'negative');
+                gameState.isAnimating = false;
+                document.getElementById('rollButton').disabled = false;
+                return;
+            }
+
+            if (newPosition > GAME_CONFIG.board.size) {
+                newPosition = GAME_CONFIG.board.size;
+            }
+
+            animateMovement(gameState.currentPosition, newPosition);
+        }
+
+        function animateMovement(from, to, isSnakeOrLadder = false) {
+            let current = from;
+            const step = () => {
+                if (current < to) {
+                    current++;
+                    gameState.currentPosition = current;
+                    placePlayer(current);
+                    updateStats();
+                    playSound('move');
+                    setTimeout(step, GAME_CONFIG.animations.playerMoveDuration);
+                } else if (current > to) {
+                    current--;
+                    gameState.currentPosition = current;
+                    placePlayer(current);
+                    updateStats();
+                    playSound('move');
+                    setTimeout(step, GAME_CONFIG.animations.playerMoveDuration);
+                } else {
+                    // Animation complete
+                    if (!isSnakeOrLadder) {
+                        checkSquare(to);
+                    } else {
+                        // After snake/ladder movement, check if we landed on another event
+                        const event = GAME_CONFIG.eventCards.find(e => e.position === to);
+                        if (event) {
+                            showEventCard(event);
+                        } else if (to === GAME_CONFIG.board.size) {
+                            setTimeout(() => {
+                                showResults();
+                            }, 500);
+                        } else {
+                            gameState.isAnimating = false;
+                            document.getElementById('rollButton').disabled = false;
+                        }
+                    }
+                }
+            };
+            step();
+        }
+
+        function checkSquare(position) {
+            const snake = GAME_CONFIG.snakes.find(s => s.start === position);
+            const ladder = GAME_CONFIG.ladders.find(l => l.start === position);
+            const event = GAME_CONFIG.eventCards.find(e => e.position === position);
+
+            if (snake) {
+                gameState.snakesHit++;
+                updateStats();
+
+                playSound('snake');
+                const square = document.getElementById(`square-${position}`);
+                if (square) createParticles(square, 'negative');
+
+                showNotification('😠 ' + snake.name, snake.description + ` Moving back to square ${snake.end}.`, 'negative');
+                setTimeout(() => {
+                    jumpToSquare(position, snake.end, 'down');
+                }, 2000);
+            } else if (ladder) {
+                gameState.laddersClimbed++;
+                updateStats();
+
+                playSound('ladder');
+                const square = document.getElementById(`square-${position}`);
+                if (square) createParticles(square, 'positive');
+
+                showNotification('😊 ' + ladder.name, ladder.description + ` Climbing to square ${ladder.end}!`, 'positive');
+                setTimeout(() => {
+                    jumpToSquare(position, ladder.end, 'up');
+                }, 2000);
+            } else if (event) {
+                playSound('event');
+                showEventCard(event);
+            } else if (position === GAME_CONFIG.board.size) {
+                playSound('win');
+                createConfetti();
+                setTimeout(() => {
+                    showResults();
+                }, 500);
+            } else {
+                gameState.isAnimating = false;
+                document.getElementById('rollButton').disabled = false;
+            }
+        }
+
+        function jumpToSquare(from, to, direction) {
+            playSound('jump');
+
+            // Create visual trail
+            createJumpTrail(from, to, direction);
+
+            const token = document.querySelector('.player-token');
+            if (token) {
+                // Add jump animation class
+                token.classList.add(direction === 'up' ? 'jumping-up' : 'jumping-down');
+
+                // Update position immediately but with animation
+                setTimeout(() => {
+                    gameState.currentPosition = to;
+                    placePlayer(to);
+                    updateStats();
+
+                    // Remove animation class after animation completes
+                    setTimeout(() => {
+                        const newToken = document.querySelector('.player-token');
+                        if (newToken) {
+                            newToken.classList.remove('jumping-up', 'jumping-down');
+                        }
+
+                        // Check if landed on another special square
+                        const event = GAME_CONFIG.eventCards.find(e => e.position === to);
+                        if (event) {
+                            showEventCard(event);
+                        } else if (to === GAME_CONFIG.board.size) {
+                            playSound('win');
+                            createConfetti();
+                            setTimeout(() => {
+                                showResults();
+                            }, 500);
+                        } else {
+                            gameState.isAnimating = false;
+                            document.getElementById('rollButton').disabled = false;
+                        }
+                    }, 100);
+                }, 400);
+            }
+        }
+
+        function createJumpTrail(from, to, direction) {
+            const fromSquare = document.getElementById(`square-${from}`);
+            const toSquare = document.getElementById(`square-${to}`);
+
+            if (!fromSquare || !toSquare) return;
+
+            const fromRect = fromSquare.getBoundingClientRect();
+            const toRect = toSquare.getBoundingClientRect();
+
+            const trail = document.createElement('div');
+            trail.className = 'jump-trail';
+
+            const startX = fromRect.left + fromRect.width / 2;
+            const startY = fromRect.top + fromRect.height / 2;
+            const endX = toRect.left + toRect.width / 2;
+            const endY = toRect.top + toRect.height / 2;
+
+            const dx = endX - startX;
+            const dy = endY - startY;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+            trail.style.width = length + 'px';
+            trail.style.height = '4px';
+            trail.style.background = direction === 'up'
+                ? 'linear-gradient(90deg, transparent, #51cf66, transparent)'
+                : 'linear-gradient(90deg, transparent, #ff6b6b, transparent)';
+            trail.style.left = startX + 'px';
+            trail.style.top = startY + 'px';
+            trail.style.transform = `rotate(${angle}deg)`;
+            trail.style.transformOrigin = 'left center';
+
+            document.body.appendChild(trail);
+
+            setTimeout(() => trail.classList.add('active'), 10);
+            setTimeout(() => trail.remove(), 1000);
+        }
+
+        function showNotification(title, text, type) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationText').textContent = text;
+            notification.className = `notification ${type} show`;
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function showEventCard(event) {
+            const card = document.getElementById('eventCard');
+            const status = document.getElementById('eventStatus');
+            const title = document.getElementById('eventTitle');
+            const description = document.getElementById('eventDescription');
+            const action = document.getElementById('eventAction');
+
+            status.textContent = event.status;
+            status.className = `event-status ${event.type}`;
+            title.textContent = event.title;
+            description.textContent = event.description;
+            action.textContent = event.movement > 0
+                ? `Move forward ${event.movement} squares!`
+                : `Move backward ${Math.abs(event.movement)} squares!`;
+
+            card.className = `event-card ${event.type} show`;
+
+            if (event.type === 'positive') {
+                gameState.positiveEvents++;
+            } else {
+                gameState.negativeEvents++;
+            }
+            updateStats();
+        }
+
+        function closeEventCard() {
+            const card = document.getElementById('eventCard');
+            card.classList.remove('show');
+
+            const position = gameState.currentPosition;
+            const event = GAME_CONFIG.eventCards.find(e => e.position === position);
+
+            if (event) {
+                const newPosition = Math.max(1, Math.min(GAME_CONFIG.board.size, position + event.movement));
+
+                // If moving more than 3 squares, use jump animation, otherwise step-by-step
+                if (Math.abs(newPosition - position) > 3) {
+                    setTimeout(() => {
+                        jumpToSquare(position, newPosition, event.movement > 0 ? 'up' : 'down');
+                    }, 300);
+                } else {
+                    setTimeout(() => {
+                        animateMovement(position, newPosition, true);
+                    }, 300);
+                }
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('position').textContent = gameState.currentPosition;
+            document.getElementById('rolls').textContent = gameState.rolls;
+            document.getElementById('ladders').textContent = gameState.laddersClimbed;
+            document.getElementById('snakes').textContent = gameState.snakesHit;
+            updateTimerDisplay();
+        }
+
+        function showResults() {
+            clearInterval(gameState.timerInterval);
+
+            const minutes = Math.floor(gameState.timeRemaining / 60);
+            const seconds = gameState.timeRemaining % 60;
+
+            document.getElementById('finalPosition').textContent = gameState.currentPosition;
+            document.getElementById('finalTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('finalRolls').textContent = gameState.rolls;
+            document.getElementById('finalLadders').textContent = gameState.laddersClimbed;
+            document.getElementById('finalSnakes').textContent = gameState.snakesHit;
+            document.getElementById('finalPositive').textContent = gameState.positiveEvents;
+
+            // Reset progress bar for animation
+            document.getElementById('progressFill').style.width = '0%';
+
+            // Reset results screen for winning scenario
+            const resultsScreen = document.getElementById('resultsScreen');
+            const resultsContainer = resultsScreen.querySelector('.results-container');
+            const celebrationDiv = resultsScreen.querySelector('.celebration');
+            const mainTitle = resultsScreen.querySelector('h1');
+            const subtitle = resultsScreen.querySelector('h2');
+
+            resultsContainer.classList.add('winning');
+            celebrationDiv.textContent = '🎉';
+            mainTitle.textContent = '100% Cloud Cost Quest!';
+            subtitle.textContent = 'Congratulations!';
+
+            showScreen('resultsScreen');
+
+            // Animate progress bar after screen shows
+            setTimeout(() => {
+                const progressPercent = (gameState.currentPosition / GAME_CONFIG.board.size) * 100;
+                document.getElementById('progressFill').style.width = progressPercent + '%';
+                document.getElementById('progressText').textContent = Math.round(progressPercent) + '%';
+            }, 500);
+        }
+
+        function playAgain() {
+            startGame();
+        }
+
+        function returnToWelcome() {
+            showScreen('welcomeScreen');
+        }
+
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const button = document.getElementById('soundToggle');
+            if (gameState.soundEnabled) {
+                button.textContent = '🔊 Sound ON';
+                playSound('event'); // Test sound
+            } else {
+                button.textContent = '🔇 Sound OFF';
+            }
+        }
+
+        function toggleFullscreen() {
+            const button = document.getElementById('fullscreenBtn');
+
+            if (!document.fullscreenElement &&
+                !document.webkitFullscreenElement &&
+                !document.mozFullScreenElement &&
+                !document.msFullscreenElement) {
+                // Enter fullscreen
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+                button.textContent = '⛶ Exit Fullscreen';
+                button.style.background = 'rgba(255, 107, 107, 0.9)';
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                button.textContent = '⛶ Fullscreen';
+                button.style.background = 'rgba(167, 139, 250, 0.9)';
+            }
+        }
+
+        // Listen for fullscreen changes
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+
+        function updateFullscreenButton() {
+            const button = document.getElementById('fullscreenBtn');
+            if (document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement) {
+                button.textContent = '⛶ Exit Fullscreen';
+                button.style.background = 'rgba(255, 107, 107, 0.9)';
+            } else {
+                button.textContent = '⛶ Fullscreen';
+                button.style.background = 'rgba(167, 139, 250, 0.9)';
+            }
+        }
+
+        // Debounce resize events for better performance
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (document.getElementById('gameScreen').classList.contains('active')) {
+                    drawConnections();
+                }
+            }, 250);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Space or Enter to roll dice
+            if ((e.key === ' ' || e.key === 'Enter') &&
+                document.getElementById('gameScreen').classList.contains('active') &&
+                !gameState.isAnimating) {
+                e.preventDefault();
+                rollDice();
+            }
+
+            // F key for fullscreen
+            if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+
+            // M key for mute/unmute
+            if (e.key === 'm' || e.key === 'M') {
+                e.preventDefault();
+                toggleSound();
+            }
+
+            // Escape to close event cards
+            if (e.key === 'Escape') {
+                const eventCard = document.getElementById('eventCard');
+                if (eventCard.classList.contains('show')) {
+                    closeEventCard();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
