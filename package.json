@@ -1,0 +1,28 @@
+{
+  "name": "snakes-ladder-game",
+  "version": "1.0.0",
+  "description": "Cloud Cost Quest - The Road to 100% Cloud Efficiency - A Snakes and Ladders game",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagthorat/snakes-ladder-game.git"
+  },
+  "keywords": [
+    "game",
+    "snakes",
+    "ladders",
+    "cloud",
+    "vercel"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sagthorat/snakes-ladder-game/issues"
+  },
+  "homepage": "https://github.com/sagthorat/snakes-ladder-game#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
