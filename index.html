@@ -1355,7 +1355,8 @@
             isAnimating: false,
             timeRemaining: 180, // 3 minutes in seconds
             timerInterval: null,
-            soundEnabled: true
+            soundEnabled: true,
+            pendingJump: null // Store pending snake/ladder jump info
         };
 
         // Sound Effects using Web Audio API
@@ -1549,7 +1550,8 @@
                 isAnimating: false,
                 timeRemaining: 180,
                 timerInterval: null,
-                soundEnabled: gameState.soundEnabled
+                soundEnabled: gameState.soundEnabled,
+                pendingJump: null
             };
             createBoard();
             updateStats();
@@ -1900,10 +1902,14 @@
                 const square = document.getElementById(`square-${position}`);
                 if (square) createParticles(square, 'negative');
 
-                showNotification('😠 ' + snake.name, snake.description + ` Moving back to square ${snake.end}.`, 'negative');
-                setTimeout(() => {
-                    jumpToSquare(position, snake.end, 'down');
-                }, 2000);
+                // Store jump info and show modal card
+                gameState.pendingJump = {
+                    from: position,
+                    to: snake.end,
+                    direction: 'down',
+                    type: 'snake'
+                };
+                showSnakeLadderCard('negative', '🐍 ' + snake.name, snake.description, `You slide down to square ${snake.end}!`);
             } else if (ladder) {
                 gameState.laddersClimbed++;
                 updateStats();
@@ -1912,10 +1918,14 @@
                 const square = document.getElementById(`square-${position}`);
                 if (square) createParticles(square, 'positive');
 
-                showNotification('😊 ' + ladder.name, ladder.description + ` Climbing to square ${ladder.end}!`, 'positive');
-                setTimeout(() => {
-                    jumpToSquare(position, ladder.end, 'up');
-                }, 2000);
+                // Store jump info and show modal card
+                gameState.pendingJump = {
+                    from: position,
+                    to: ladder.end,
+                    direction: 'up',
+                    type: 'ladder'
+                };
+                showSnakeLadderCard('positive', '🪜 ' + ladder.name, ladder.description, `You climb up to square ${ladder.end}!`);
             } else if (event) {
                 playSound('event');
                 showEventCard(event);
@@ -2023,6 +2033,22 @@
             }, 3000);
         }
 
+        function showSnakeLadderCard(type, title, description, action) {
+            const card = document.getElementById('eventCard');
+            const status = document.getElementById('eventStatus');
+            const titleElement = document.getElementById('eventTitle');
+            const descriptionElement = document.getElementById('eventDescription');
+            const actionElement = document.getElementById('eventAction');
+
+            status.textContent = type === 'positive' ? 'Good Practice!' : 'Cost Inefficiency!';
+            status.className = `event-status ${type}`;
+            titleElement.textContent = title;
+            descriptionElement.textContent = description;
+            actionElement.textContent = action;
+
+            card.className = `event-card ${type} show`;
+        }
+
         function showEventCard(event) {
             const card = document.getElementById('eventCard');
             const status = document.getElementById('eventStatus');
@@ -2052,21 +2078,32 @@
             const card = document.getElementById('eventCard');
             card.classList.remove('show');
 
-            const position = gameState.currentPosition;
-            const event = GAME_CONFIG.eventCards.find(e => e.position === position);
+            // Check if this is a snake/ladder jump
+            if (gameState.pendingJump) {
+                const jump = gameState.pendingJump;
+                gameState.pendingJump = null; // Clear the pending jump
 
-            if (event) {
-                const newPosition = Math.max(1, Math.min(GAME_CONFIG.board.size, position + event.movement));
+                setTimeout(() => {
+                    jumpToSquare(jump.from, jump.to, jump.direction);
+                }, 300);
+            } else {
+                // This is an event card
+                const position = gameState.currentPosition;
+                const event = GAME_CONFIG.eventCards.find(e => e.position === position);
 
-                // If moving more than 3 squares, use jump animation, otherwise step-by-step
-                if (Math.abs(newPosition - position) > 3) {
-                    setTimeout(() => {
-                        jumpToSquare(position, newPosition, event.movement > 0 ? 'up' : 'down');
-                    }, 300);
-                } else {
-                    setTimeout(() => {
-                        animateMovement(position, newPosition, true);
-                    }, 300);
+                if (event) {
+                    const newPosition = Math.max(1, Math.min(GAME_CONFIG.board.size, position + event.movement));
+
+                    // If moving more than 3 squares, use jump animation, otherwise step-by-step
+                    if (Math.abs(newPosition - position) > 3) {
+                        setTimeout(() => {
+                            jumpToSquare(position, newPosition, event.movement > 0 ? 'up' : 'down');
+                        }, 300);
+                    } else {
+                        setTimeout(() => {
+                            animateMovement(position, newPosition, true);
+                        }, 300);
+                    }
                 }
             }
         }
