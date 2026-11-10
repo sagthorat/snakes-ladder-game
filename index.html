@@ -685,6 +685,50 @@
             color: #a78bfa;
         }
 
+        .record-to-beat {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid rgba(167, 139, 250, 0.5);
+            margin-bottom: 15px !important;
+            animation: recordPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes recordPulse {
+            0%, 100% {
+                border-color: rgba(167, 139, 250, 0.5);
+                box-shadow: 0 0 5px rgba(167, 139, 250, 0.3);
+            }
+            50% {
+                border-color: rgba(245, 87, 108, 0.8);
+                box-shadow: 0 0 15px rgba(245, 87, 108, 0.5);
+            }
+        }
+
+        .welcome-record {
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .welcome-record-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1em;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            animation: recordGlowWelcome 3s ease-in-out infinite;
+        }
+
+        @keyframes recordGlowWelcome {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(245, 87, 108, 0.6);
+            }
+        }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -833,6 +877,108 @@
         .event-status.negative {
             background: #ffe3e3;
             color: #c92a2a;
+        }
+
+        /* Name Input Card for New Records */
+        .new-record-card {
+            border: 3px solid #f5576c;
+            box-shadow: 0 10px 40px rgba(245, 87, 108, 0.5);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-sizing: border-box;
+            text-align: center;
+            background: white;
+        }
+
+        .name-input:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 10px rgba(245, 87, 108, 0.5);
+        }
+
+        /* Leaderboard Section */
+        .leaderboard-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .leaderboard-section h3 {
+            margin: 0 0 15px 0;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .leaderboard-content {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .record-display {
+            text-align: center;
+        }
+
+        .record-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .record-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .record-holder {
+            font-size: 1.2rem;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .record-date {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .record-badge {
+            margin-top: 15px;
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .current-player-record {
+            animation: recordGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes recordGlow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .no-record {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
         }
 
         .results-container {
@@ -1098,6 +1244,11 @@
             Can you achieve cloud cost efficiency?<br><br>
             Roll the dice, climb the ladders of good FinOps practices and avoid the snakes of cloud cost inefficiencies. Your goal is to reach 100!
         </p>
+        <div id="welcomeRecord" class="welcome-record" style="display: none;">
+            <div class="welcome-record-content">
+                🏆 <strong>Current Record:</strong> <span id="welcomeRecordText">-</span>
+            </div>
+        </div>
         <div class="feature-list" style="margin: 30px auto;">
             <div class="feature-item">
                 <div class="feature-icon">🪜</div>
@@ -1205,6 +1356,9 @@
                     <div class="stat-item" style="font-size: 1.3em; color: #ffd93d; font-weight: bold; margin-bottom: 15px;">
                         <span class="stat-label" style="color: #ffd93d;">⏱️ Time:</span> <span id="timer">3:00</span>
                     </div>
+                    <div id="recordToBeat" class="stat-item record-to-beat" style="display: none;">
+                        <span class="stat-label">🏆 Record to Beat:</span> <span id="currentRecord">-</span>
+                    </div>
                     <div class="stat-item"><span class="stat-label">Position:</span> <span id="position">1</span>/100</div>
                     <div class="stat-item"><span class="stat-label">Rolls:</span> <span id="rolls">0</span></div>
                     <div class="stat-item"><span class="stat-label">Ladders Climbed:</span> <span id="ladders">0</span></div>
@@ -1257,6 +1411,14 @@
                 </div>
             </div>
 
+            <!-- Leaderboard Section -->
+            <div id="leaderboardSection" class="leaderboard-section">
+                <h3>🏆 Leaderboard</h3>
+                <div id="leaderboardContent" class="leaderboard-content">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
             <p class="intro-text" style="font-style: italic; font-size: 1em; margin-top: 30px;">
                 "FinOps is a continuous journey of visibility, accountability and optimisation. The goal isn't simply to spend less, but to maximise the value of every cloud dollar."
             </p>
@@ -1288,6 +1450,16 @@
         <p id="eventDescription" style="margin: 20px 0; line-height: 1.6;"></p>
         <p id="eventAction" style="font-weight: 600; color: #a78bfa;"></p>
         <button onclick="closeEventCard()">Continue</button>
+    </div>
+
+    <!-- New Record Name Input Modal -->
+    <div id="nameInputCard" class="event-card new-record-card">
+        <span class="event-status">🏆 NEW RECORD!</span>
+        <h2>Congratulations!</h2>
+        <p id="recordMessage" style="margin: 20px 0; line-height: 1.6;"></p>
+        <input type="text" id="playerNameInput" maxlength="20"
+               placeholder="Enter your name" class="name-input">
+        <button onclick="saveRecordAndContinue()">Save Record</button>
     </div>
 
     <script>
@@ -1358,6 +1530,26 @@
             soundEnabled: true,
             pendingJump: null // Store pending snake/ladder jump info
         };
+
+        // Leaderboard management
+        function getLeaderboard() {
+            const stored = localStorage.getItem('cloudCostQuestLeaderboard');
+            return stored ? JSON.parse(stored) : { rolls: null, name: null, date: null };
+        }
+
+        function saveLeaderboard(rolls, name) {
+            const data = {
+                rolls: rolls,
+                name: name,
+                date: new Date().toISOString()
+            };
+            localStorage.setItem('cloudCostQuestLeaderboard', JSON.stringify(data));
+        }
+
+        function isNewRecord(rolls) {
+            const leaderboard = getLeaderboard();
+            return leaderboard.rolls === null || rolls < leaderboard.rolls;
+        }
 
         // Sound Effects using Web Audio API
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1555,6 +1747,7 @@
             };
             createBoard();
             updateStats();
+            displayCurrentRecord();
             startTimer();
             showScreen('gameScreen');
             document.getElementById('keyboardHints').style.display = 'block';
@@ -2144,6 +2337,21 @@
             mainTitle.textContent = '100% Cloud Cost Quest!';
             subtitle.textContent = 'Congratulations!';
 
+            // Check if new record
+            if (isNewRecord(gameState.rolls)) {
+                // Show name input card
+                document.getElementById('recordMessage').textContent =
+                    `You reached square 100 in just ${gameState.rolls} rolls! Enter your name for the leaderboard:`;
+                document.getElementById('nameInputCard').classList.add('show');
+                document.getElementById('playerNameInput').value = '';
+                setTimeout(() => {
+                    document.getElementById('playerNameInput').focus();
+                }, 300);
+            } else {
+                // Show existing record
+                displayLeaderboard();
+            }
+
             showScreen('resultsScreen');
 
             // Animate progress bar after screen shows
@@ -2159,7 +2367,69 @@
         }
 
         function returnToWelcome() {
+            displayWelcomeRecord();
             showScreen('welcomeScreen');
+        }
+
+        function saveRecordAndContinue() {
+            const nameInput = document.getElementById('playerNameInput');
+            const name = nameInput.value.trim() || 'Anonymous';
+
+            saveLeaderboard(gameState.rolls, name);
+
+            // Close modal
+            document.getElementById('nameInputCard').classList.remove('show');
+
+            // Display updated leaderboard
+            displayLeaderboard();
+        }
+
+        function displayLeaderboard() {
+            const leaderboard = getLeaderboard();
+            const leaderboardContent = document.getElementById('leaderboardContent');
+
+            if (leaderboard.rolls === null) {
+                leaderboardContent.innerHTML = '<p class="no-record">No records yet. Be the first!</p>';
+            } else {
+                const isCurrentPlayer = leaderboard.rolls === gameState.rolls;
+                const recordDate = new Date(leaderboard.date).toLocaleDateString();
+
+                leaderboardContent.innerHTML = `
+                    <div class="record-display ${isCurrentPlayer ? 'current-player-record' : ''}">
+                        <div class="record-label">Best Score:</div>
+                        <div class="record-value">${leaderboard.rolls} rolls</div>
+                        <div class="record-holder">by ${leaderboard.name}</div>
+                        <div class="record-date">${recordDate}</div>
+                        ${isCurrentPlayer ? '<div class="record-badge">👑 You hold the record!</div>' : ''}
+                    </div>
+                `;
+            }
+        }
+
+        function displayCurrentRecord() {
+            const leaderboard = getLeaderboard();
+            const recordDisplay = document.getElementById('recordToBeat');
+            const currentRecordSpan = document.getElementById('currentRecord');
+
+            if (leaderboard.rolls !== null) {
+                currentRecordSpan.textContent = `${leaderboard.rolls} rolls by ${leaderboard.name}`;
+                recordDisplay.style.display = 'block';
+            } else {
+                recordDisplay.style.display = 'none';
+            }
+        }
+
+        function displayWelcomeRecord() {
+            const leaderboard = getLeaderboard();
+            const welcomeRecord = document.getElementById('welcomeRecord');
+            const welcomeRecordText = document.getElementById('welcomeRecordText');
+
+            if (leaderboard.rolls !== null) {
+                welcomeRecordText.textContent = `${leaderboard.rolls} rolls by ${leaderboard.name}`;
+                welcomeRecord.style.display = 'block';
+            } else {
+                welcomeRecord.style.display = 'none';
+            }
         }
 
         function toggleSound() {
@@ -2269,6 +2539,20 @@
                     closeEventCard();
                 }
             }
+
+            // Enter key to save record
+            if (e.key === 'Enter') {
+                const nameInputCard = document.getElementById('nameInputCard');
+                if (nameInputCard.classList.contains('show')) {
+                    e.preventDefault();
+                    saveRecordAndContinue();
+                }
+            }
+        });
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            displayWelcomeRecord();
         });
     </script>
 </body>
