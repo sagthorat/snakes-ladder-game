@@ -2011,7 +2011,16 @@
                 rollCount++;
                 if (rollCount > 8) {
                     clearInterval(rollInterval);
-                    const finalRoll = Math.floor(Math.random() * 6) + 1;
+
+                    // Guaranteed win roll for final stretch (squares 96-99)
+                    let finalRoll;
+                    if (gameState.currentPosition >= 96 && gameState.currentPosition <= 99) {
+                        // Calculate exact number needed to reach 100
+                        finalRoll = GAME_CONFIG.board.size - gameState.currentPosition;
+                    } else {
+                        finalRoll = Math.floor(Math.random() * 6) + 1;
+                    }
+
                     dice.textContent = finalRoll;
                     dice.classList.remove('rolling');
 
